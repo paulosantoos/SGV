@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form>
+			<f:event listener="#{MBProduto.carregarFornecedores}"
+				type="preRenderView" />
+
+			<h:panelGrid cellpadding="5" cellspacing="5">
+				<h3>Relatório de Venda</h3>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" cellpadding="5" cellspacing="5">
+
+				<p:outputLabel value="Data inicial:" />
+				<p:calendar id="txtProDataCadastroInicial"
+					value="#{MBRelatorio.dataCadastroProdutoInicial}" mode="popup"
+					required="true" requiredMessage="Selecione uma data inicial!">
+					<p:watermark for="txtProDataCadastroInicial" value="01/01/2014" />
+				</p:calendar>
+
+				<p:outputLabel value="Data  final" />
+				<p:calendar id="txtProDataCadastroProdutoFinal"
+					value="#{MBRelatorio.dataCadastroProdutoFinal}" mode="popup"
+					required="true" requiredMessage="Selecione uma data final!">
+					<p:watermark for="txtProDataCadastroProdutoFinal"
+						value="12/12/2014" />
+				</p:calendar>
+
+				<p:commandButton value="Gerar Relatório" icon="ui-icon-print"
+					ajax="false" actionListener="#{MBRelatorio.relatorioVendas()}" />
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

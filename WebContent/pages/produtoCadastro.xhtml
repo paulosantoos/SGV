@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="proacao" value="#{MBProduto.acao}" />
+			<f:viewParam name="produtoCodigo" value="#{MBProduto.codigo}" />
+
+			<f:event listener="#{MBProduto.carregarCadastro}"
+				type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:panelGrid cellpadding="5" cellspacing="5">
+			<h2>Cadastro de Produtos</h2>
+		</h:panelGrid>
+
+		<h:form id="frmProduto">
+			<h:panelGrid id="pnlProduto" columns="2" cellpadding="5"
+				cellspacing="5">
+
+				<p:outputLabel value="Código:" />
+				<p:inputText maxlength="7" size="8" disabled="true"
+					value="#{MBProduto.produto.codigo}" />
+
+				<p:outputLabel for="descricao" value="Descrição:" />
+				<p:inputText id="descricao" maxlength="200" size="50"
+					value="#{MBProduto.produto.descricao}" required="true"
+					requiredMessage="O campo descrição é obrigatório."
+					readonly="#{MBProduto.acao == 'Excluir'}" />
+
+				<p:outputLabel for="quantidade" value="Quantidade:" />
+				<p:spinner id="quantidade" min="0.00" max="9999.99" size="6"
+					value="#{MBProduto.produto.quantidade}" 
+					
+					requiredMessage="O campo quantidade é obrigatório."
+					validatorMessage="Informe um valor entre 0 e 9999 para o campo quantidade"
+					readonly="#{MBProduto.acao == 'Excluir'}">
+				</p:spinner>
+
+				<p:outputLabel for="valor" value="Valor Unitário:" />
+				<p:inputMask id="valor" maxlength="7" size="20"
+					value="#{MBProduto.produto.valorUnitario}"
+					requiredMessage="Determine um valor para o produto."
+					validatorMessage="Informe um valor entre 0 e 9999,99 para o campo valor unitário"
+					readonly="#{MBProduto.acao == 'Excluir'}">
+					<f:convertNumber/>
+				</p:inputMask>
+				
+				<p:outputLabel for="valor" value="Valor Custo:" />
+				<p:inputMask id="valorCusto" maxlength="7" size="20"
+					value="#{MBProduto.produto.valorCompra}"
+					requiredMessage="Determine um valor para o produto."
+					validatorMessage="Informe um valor entre 0 e 9999,99 para o campo valor de custo"
+					readonly="#{MBProduto.acao == 'Excluir'}">
+					<f:convertNumber/>
+				</p:inputMask>
+
+				<p:outputLabel for="txtProDataCadastro" value="Data Cadastro:" />
+				<p:calendar id="txtProDataCadastro"
+					value="#{MBProduto.produto.dataCadastro}" mask="99/99/99"
+					mode="popup" required="true"
+					requiredMessage="O campo data de cadastro é obrigatório"
+					disabled="#{MBProduto.acao == 'Excluir'}" />
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="5" cellspacing="40">
+				<p:commandButton value="Novo" icon="ui-icon-document"
+					update="pnlProduto" process="@this"
+					actionListener="#{MBProduto.novo}"
+					rendered="#{MBProduto.acao == 'Novo'}">
+				</p:commandButton>
+
+				<p:commandButton value="Salvar" icon="ui-icon-disk"
+					actionListener="#{MBProduto.salvar}"
+					update=":msgGlobal :frmProduto:pnlProduto"
+					rendered="#{MBProduto.acao == 'Novo'}">
+				</p:commandButton>
+
+				<p:commandButton value="Editar" icon="ui-icon-pencil"
+					actionListener="#{MBProduto.editar}"
+					update=":msgGlobal :frmProduto:pnlProduto"
+					rendered="#{MBProduto.acao == 'Editar'}">
+				</p:commandButton>
+
+				<p:commandButton value="Excluir" icon="ui-icon-trash"
+					actionListener="#{MBProduto.excluir}" update=":msgGlobal"
+					rendered="#{MBProduto.acao == 'Excluir'}">
+				</p:commandButton>
+
+				<p:button value="Voltar" icon="ui-icon-arrowreturnthick-1-w"
+					outcome="/pages/produtoPesquisa.xhtml">
+				</p:button>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

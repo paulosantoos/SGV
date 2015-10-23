@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="foracao" value="#{MBFornecedor.acao}" />
+			<f:viewParam name="fornecedorCodigo" value="#{MBFornecedor.codigo}" />
+
+			<f:event listener="#{MBFornecedor.carregarCadastro}"
+				type="preRenderView" />
+			<f:event listener="#{MBFornecedor.carregarEstados}"
+				type="preRenderView" />
+			<f:event listener="#{MBFornecedor.carregarCidades}"
+				type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="frmFornecedor">
+			<h:panelGrid cellpadding="5" cellspacing="5">
+				<h2>Cadastro de Fornecedores</h2>
+			</h:panelGrid>
+
+			<h:panelGrid id="pnlFornecedor" columns="4" cellpadding="5"
+				cellspacing="5">
+				<p:outputLabel value="Código:" />
+				<p:inputText maxlength="7" size="8" disabled="true"
+					value="#{MBFornecedor.fornecedor.codigo}" />
+
+				<p:outputLabel for="txtForCnpj" value="CNPJ:" />
+				<p:inputMask id="txtForCnpj" value="#{MBFornecedor.fornecedor.cnpj}"
+					maxlength="20" size="25" mask="99.999.999/9999-99" required="true"
+					requiredMessage="O campo CNPJ é obrigatório."
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel for="txtForNomeFantasia" value="Nome Fantasia:" />
+				<p:inputText id="txtForNomeFantasia"
+					value="#{MBFornecedor.fornecedor.nomeFantasia}" required="true"
+					requiredMessage="O campo nome fantasia é obrigatório."
+					maxlength="40" size="61"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Inscrição Estadual:" />
+				<p:inputText value="#{MBFornecedor.fornecedor.inscricaoEstadual}"
+					maxlength="20" size="25"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Contato:" />
+				<p:inputText value="#{MBFornecedor.fornecedor.contato}"
+					maxlength="40" size="61"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Bairro:" />
+				<p:inputText value="#{MBFornecedor.fornecedor.bairro}"
+					maxlength="20" size="28"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel for="txtForEndereco" value="Endereço:" />
+				<p:inputText id="txtForEndereco"
+					value="#{MBFornecedor.fornecedor.endereco}" maxlength="45"
+					size="61" required="true"
+					requiredMessage="O campo endereço é obrigatório."
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel for="cbForEstado" value="Estado:" />
+				<p:selectOneMenu id="cbForEstado"
+					value="#{MBFornecedor.fornecedor.estado.codigo}" filter="true"
+					required="true" requiredMessage="O campo estado é obrigatório."
+					disabled="#{MBFornecedor.acao == 'Excluir'}">
+					<f:selectItem itemValue="" itemLabel="Selecione uma estado" />
+					<f:selectItems value="#{MBFornecedor.comboEstados}" var="estado"
+						itemValue="#{estado.codigo}" itemLabel="#{estado.nome}" />
+					<p:ajax listener="#{MBFornecedor.carregarCidades}"
+						update="cbForCidade" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Complemento:" />
+				<p:inputText maxlength="35" size="28"
+					value="#{MBFornecedor.fornecedor.complemento}"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel for="cbForCidade" value="Cidade:" />
+				<p:selectOneMenu id="cbForCidade"
+					value="#{MBFornecedor.fornecedor.cidade.codigo}" filter="true"
+					required="true" requiredMessage="O campo cidade é obrigatório."
+					disabled="#{MBFornecedor.acao == 'Excluir'}">
+					<f:selectItem itemValue="" itemLabel="Selecione uma cidade" />
+					<f:selectItems value="#{MBFornecedor.comboCidades}" var="cidade"
+						itemValue="#{cidade.codigo}" itemLabel="#{cidade.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Telefone:" />
+				<p:inputMask value="#{MBFornecedor.fornecedor.telefone}"
+					maxlength="20" size="20" mask="(99)9999-9999"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Celular:" />
+				<p:inputMask value="#{MBFornecedor.fornecedor.celular}"
+					maxlength="20" size="20" mask="(99)9999-9999"
+					readonly="#{MBFornecedor.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Email:" />
+				<p:inputText value="#{MBFornecedor.fornecedor.email}"
+					id="txtForEmail" maxlength="80" size="61"
+					readonly="#{MBFornecedor.acao == 'Excluir'}">
+					<p:watermark for="txtForEmail"
+						value="exemplo@exemplo.com; exemplo2@exemplo.com" />
+				</p:inputText>
+
+				<p:outputLabel for="txtForDataCadastro" value="Data Cadastro:" />
+				<p:calendar id="txtForDataCadastro"
+					value="#{MBFornecedor.fornecedor.dataCadastro}" mask="99/99/99"
+					mode="popup" required="true"
+					requiredMessage="O campo data de cadastro é obrigatório"
+					disabled="#{MBFornecedor.acao == 'Excluir'}" />
+
+			</h:panelGrid>
+			<h:panelGrid columns="5" cellspacing="40">
+				<p:commandButton value="Novo" icon="ui-icon-document"
+					update="pnlFornecedor" process="@this"
+					actionListener="#{MBFornecedor.novo}"
+					rendered="#{MBFornecedor.acao == 'Novo'}">
+				</p:commandButton>
+
+				<p:commandButton value="Salvar" icon="ui-icon-disk"
+					actionListener="#{MBFornecedor.salvar}"
+					update=":msgGlobal :frmFornecedor:pnlFornecedor"
+					rendered="#{MBFornecedor.acao == 'Novo'}">
+				</p:commandButton>
+
+				<p:commandButton value="Editar" icon="ui-icon-pencil"
+					actionListener="#{MBFornecedor.editar}"
+					update=":msgGlobal :frmFornecedor:pnlFornecedor"
+					rendered="#{MBFornecedor.acao == 'Editar'}">
+				</p:commandButton>
+
+				<p:commandButton value="Excluir" icon="ui-icon-trash"
+					actionListener="#{MBFornecedor.excluir}" update=":msgGlobal"
+					rendered="#{MBFornecedor.acao == 'Excluir'}">
+				</p:commandButton>
+
+				<p:button value="Voltar" icon="ui-icon-arrowreturnthick-1-w"
+					outcome="/pages/fornecedorPesquisa.xhtml">
+				</p:button>
+			</h:panelGrid>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

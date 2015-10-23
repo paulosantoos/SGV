@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloVendas.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event listener="#{MBVenda.carregarProdutos}" type="preRenderView" />
+			<f:event listener="#{MBVenda.carregarFormasPagamento}"
+				type="preRenderView" />
+			<f:event listener="#{MBVenda.carregarClientes}" type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="frmVendaCad">
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Vendas" />
+				</f:facet>
+			</p:toolbar>
+
+			<p:separator />
+
+			<p:wizard backLabel="Voltar" nextLabel="Avançar"
+				flowListener="#{MBVenda.flowHandler}">
+				<p:tab id="adicionarCarrinho" title="Adicionar ao carrinho"
+					titleStyle="font-size: 12px !important;">
+
+					<p:dataTable value="#{MBVenda.produtos}" var="produto"
+						emptyMessage="Nenhum registro encontrado." paginator="true"
+						rows="4" filteredValue="#{MBVenda.produtosFiltrados}">
+
+						<p:column headerText="Código" style="width: 4%">
+							<h:outputText value="#{produto.codigo}" />
+						</p:column>
+
+						<p:column headerText="Descrição" filterBy="#{produto.descricao}"
+							sortBy="#{produto.descricao}">
+							<h:outputText value="#{produto.descricao}" />
+						</p:column>
+
+						<p:column headerText="Valor unit." style="width: 8%"
+							sortBy="#{produto.valorUnitario}">
+							<h:outputText value="R$ #{produto.valorUnitario}" />
+						</p:column>
+
+						<p:column headerText="Qtde" style="width: 5%"
+							sortBy="#{produto.quantidade}">
+							<h:outputText value="#{produto.quantidade}" />
+						</p:column>
+
+						
+
+						<p:column headerText="Opções" style="width: 8%">
+							<p:commandButton value="Adicionar" icon="ui-icon-plus"
+								actionListener="#{MBVenda.adicionar(produto)}"
+								update=":frmVendaCad:tblItens :frmVendaCad:txtVenValorFinal :frmVendaCad:txtVenValorTotal" />
+						</p:column>
+					</p:dataTable>
+
+					<p:separator />
+
+					<p:dataTable id="tblItens" value="#{MBVenda.listaItens}" var="item"
+						emptyMessage="Nenhum registro encontrado." paginator="true"
+						rows="3">
+
+						<p:column headerText="Produto">
+							<h:outputText value="#{item.produto.descricao}" />
+						</p:column>
+
+						<p:column headerText="Valor unit." style="width: 8%">
+							<h:outputText value="#{item.valor}" />
+						</p:column>
+
+						<p:column headerText="Qtde" style="width: 5%">
+							<h:outputText value="#{item.quantidade}" />
+						</p:column>
+
+						
+
+						<p:column headerText="Opções" style="width: 8%">
+							<p:commandButton value="Remover" icon="ui-icon-plus"
+								actionListener="#{MBVenda.remover(item)}"
+								update=":frmVendaCad:tblItens :frmVendaCad:txtVenValorFinal :frmVendaCad:txtVenValorTotal :frmVendaCad:txtDesconto" />
+						</p:column>
+					</p:dataTable>
+
+					<h:panelGrid columns="1" cellpadding="5" cellspacing="5">
+						<p:outputLabel id="txtVenValorTotal"
+							style="font-weight: bold; font-size: 20px !important"
+							value="Valor total: R$ #{MBVenda.vendaCadastro.valor}" />
+					</h:panelGrid>
+				</p:tab>
+
+				<p:tab id="formaPgto" title="Forma de pagamento"
+					titleStyle="font-size: 12px !important;">
+
+					<p:dataTable id="tblItensFrmPgto" value="#{MBVenda.listaItens}"
+						var="item" emptyMessage="Nenhum registro encontrado."
+						paginator="true" rows="5">
+
+						<f:facet name="header">
+							<h:outputText value="Itens da lista" />
+						</f:facet>
+
+						<p:column headerText="Produto">
+							<h:outputText value="#{item.produto.descricao}" />
+						</p:column>
+
+						<p:column headerText="Valor unit." style="width: 8%">
+							<h:outputText value="#{item.valor}" />
+						</p:column>
+
+						<p:column headerText="Qtde" style="width: 5%">
+							<h:outputText value="#{item.quantidade}" />
+						</p:column>
+
+					</p:dataTable>
+
+					<h:panelGrid columns="3" cellpadding="5" cellspacing="5">
+						<p:outputLabel
+							style="font-weight: bold; font-size: 20px !important;"
+							value="Valor: R$ #{MBVenda.vendaCadastro.valor}" />
+
+						<p:outputLabel id="txtVenValorDesconto"
+							style="font-weight: bold; font-size: 20px !important; margin-left: 50px !important"
+							value="Desconto: R$ #{MBVenda.vendaCadastro.desconto}" />
+
+						<p:outputLabel id="txtVenValorFinal"
+							style="font-weight: bold; font-size: 20px !important; margin-left: 50px !important;"
+							value="Valor final: R$ #{MBVenda.vendaCadastro.valor}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" cellpadding="5" cellspacing="5">
+						<p:outputLabel id="lblFrmPgto" for="cbFrmPgto"
+							style="font-weight: bold" value="Escolha uma forma de pagamento:" />
+						<p:selectOneMenu id="cbFrmPgto"
+							value="#{MBVenda.vendaCadastro.formaPagamento.codigo}"
+							required="true" requiredMessage="Escolha forma de pagamento"
+							disabled="#{MBVenda.vendaCadastro.desconto > 0}">
+							<f:selectItem itemValue=""
+								itemLabel="Selecione forma de pagamento" />
+							<f:selectItems value="#{MBVenda.comboFormasPagamento}"
+								var="frmPgto" itemValue="#{frmPgto.codigo}"
+								itemLabel="#{frmPgto.descricao}" />
+							<p:ajax
+								update=":frmVendaCad:lblQtdParcelas :frmVendaCad:spQtdParcelas" />
+						</p:selectOneMenu>
+
+						<p:outputLabel id="lblClientes" for="cbClientes"
+							style="font-weight: bold" value="Escolha um cliente:" />
+						<p:selectOneMenu id="cbClientes"
+							value="#{MBVenda.vendaCadastro.cliente.codigo}" required="true"
+							requiredMessage="Escolha o cliente"
+							disabled="#{MBVenda.vendaCadastro.desconto > 0}">
+							<f:selectItem itemValue="" itemLabel="Selecione um cliente" />
+							<f:selectItems value="#{MBVenda.comboClientes}" var="cliente"
+								itemValue="#{cliente.codigo}" itemLabel="#{cliente.nome}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" cellpadding="5" cellspacing="5">
+						<p:outputLabel id="lblQtdParcelas" value="Qtd parcelas:"
+							style="font-weight: bold"
+							rendered="#{MBVenda.vendaCadastro.formaPagamento.codigo == 2}" />
+
+						<p:spinner id="spQtdParcelas" min="2" max="12" size="6"
+							required="true" requiredMessage="Escolha quantidade de parcelas"
+							rendered="#{MBVenda.vendaCadastro.formaPagamento.codigo == 2}">
+						</p:spinner>
+					</h:panelGrid>
+
+					<h:panelGrid columns="4" cellpadding="5" cellspacing="5">
+						<p:outputLabel value="Desconto:" />
+						<p:inputText id="txtDesconto"
+							value="#{MBVenda.vendaCadastro.desconto}" maxlength="7" size="10"
+							placeholder="0.0"
+							disabled="#{MBVenda.vendaCadastro.desconto > 0}" />
+
+						<p:commandButton id="btnAplicarDesconto" value="Aplicar desconto"
+							icon="ui-icon-check" actionListener="#{MBVenda.descontoVenda}"
+							update=":frmVendaCad:txtVenValorFinal :frmVendaCad:txtVenValorDesconto :frmVendaCad:txtDesconto
+								:frmVendaCad:btnAplicarDesconto :frmVendaCad:btnDesfazer :frmVendaCad:cbClientes
+								:frmVendaCad:cbFrmPgto :msgGlobal"
+							disabled="#{MBVenda.vendaCadastro.desconto > 0}" />
+
+						<p:commandButton id="btnDesfazer" value="Desfazer"
+							icon="ui-icon-arrowreturnthick-1-w"
+							actionListener="#{MBVenda.desfazerDesconto}"
+							update=":frmVendaCad:txtVenValorFinal :frmVendaCad:txtVenValorDesconto :frmVendaCad:txtDesconto
+								:frmVendaCad:btnAplicarDesconto :frmVendaCad:btnDesfazer :frmVendaCad:cbClientes
+								:frmVendaCad:cbFrmPgto :msgGlobal"
+							disabled="#{MBVenda.vendaCadastro.desconto == 0}" />
+					</h:panelGrid>
+				</p:tab>
+
+				<p:tab id="confirmacao" title="Confirmar"
+					titleStyle="font-size: 12px !important;">
+
+					<p:panel header="Confirmação">
+						<p:dataTable value="#{MBVenda.listaItens}" var="item"
+							emptyMessage="Nenhum registro encontrado." paginator="true"
+							rows="5">
+
+							<f:facet name="header">
+								<h:outputText value="Carrinho de compras" />
+							</f:facet>
+
+							<p:column headerText="Produto">
+								<h:outputText value="#{item.produto.descricao}" />
+							</p:column>
+
+							<p:column headerText="Valor unit." style="width: 8%">
+								<h:outputText value="#{item.valor}" />
+							</p:column>
+
+							<p:column headerText="Qtde" style="width: 5%">
+								<h:outputText value="#{item.quantidade}" />
+							</p:column>
+
+							
+						</p:dataTable>
+
+						<h:panelGrid columns="3" cellpadding="5" cellspacing="5">
+							<p:outputLabel
+								style="font-weight: bold; font-size: 20px !important;"
+								value="Valor: R$ #{MBVenda.vendaCadastro.valor}" />
+
+							<p:outputLabel
+								style="font-weight: bold; font-size: 20px !important; margin-left: 50px !important"
+								value="Desconto: R$ #{MBVenda.vendaCadastro.desconto}" />
+
+							<p:outputLabel
+								style="font-weight: bold; font-size: 20px !important; margin-left: 50px !important;"
+								value="Valor final: R$ #{MBVenda.vendaCadastro.valor}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="4" cellpadding="5" cellspacing="5">
+							<p:outputLabel value="Funcionário:"
+								style="font-size: 15px !important" />
+							<h:outputText value="#{MBAutenticar.funcionarioLogado.nome}"
+								style="font-size: 15px" />
+
+							<p:outputLabel value="Data/Hora:"
+								style="margin-left: 300px !important; font-size: 15px !important" />
+
+							<h:outputText value="#{MBVenda.vendaCadastro.dataHora}"
+								style="font-size: 15px">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+									timeZone="America/Sao_Paulo" />
+							</h:outputText>
+
+							<p:outputLabel value="Cliente:"
+								style="font-size: 15px !important" />
+							<h:outputText value="#{MBVenda.vendaCadastro.cliente.nome}"
+								style="font-size: 15px" />
+						</h:panelGrid>
+					</p:panel>
+
+					<p:commandButton value="FINALIZAR" icon="ui-icon-check"
+						style="position: absolute; right: 0px; margin-top: 3px"
+						actionListener="#{MBVenda.finalizarVenda}" update=":msgGlobal" />
+				</p:tab>
+			</p:wizard>
+		</h:form>
+	</ui:define>
+</ui:composition>

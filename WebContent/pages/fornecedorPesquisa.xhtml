@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event listener="#{MBFornecedor.carregarPesquisa}"
+				type="preRenderView" />
+			<f:event listener="#{MBFornecedor.carregarCidades}"
+				type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<p:toolbar>
+			<f:facet name="left">
+				<h:outputText value="Listagem de fornecedores" />
+			</f:facet>
+		</p:toolbar>
+
+		<h:form>
+			<p:dataTable value="#{MBFornecedor.fornecedores}" var="fornecedor"
+				emptyMessage="Nenhum registro encontrado." paginator="true" rows="5"
+				filteredValue="#{MBFornecedor.fornecedoresFiltrados}">
+
+				<p:column headerText="Código" style="width: 5%">
+					<h:outputText value="#{fornecedor.codigo}" />
+				</p:column>
+
+				<p:column headerText="Nome Fantasia"
+					sortBy="#{fornecedor.nomeFantasia}"
+					filterBy="#{fornecedor.nomeFantasia}">
+					<h:outputText value="#{fornecedor.nomeFantasia}" />
+				</p:column>
+
+				<p:column headerText="Cidade" filterBy="#{fornecedor.cidade.nome}">
+					<h:outputText value="#{fornecedor.cidade.nome}" />
+				</p:column>
+
+				<p:column headerText="Opções" style="width: 15%">
+					<p:button value="Editar" icon="ui-icon-pencil"
+						outcome="/pages/fornecedorCadastro.xhtml">
+						<f:param name="fornecedorCodigo" value="#{fornecedor.codigo}" />
+						<f:param name="foracao" value="Editar" />
+					</p:button>
+
+					<p:button value="Excluir" icon="ui-icon-trash"
+						outcome="/pages/fornecedorCadastro.xhtml">
+						<f:param name="fornecedorCodigo" value="#{fornecedor.codigo}" />
+						<f:param name="foracao" value="Excluir" />
+					</p:button>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:button value="Novo" icon="ui-icon-document"
+						outcome="/pages/fornecedorCadastro.xhtml">
+						<f:param name="foracao" value="Novo" />
+					</p:button>
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+	<!-- ABRE UM FORM E DEFINE UM ID -->
+	<h:form id="frmMenuPrincipal">
+		<!-- 	OUTPUTLABEL É PARA EXIBIR O NOME DO FUNCIONARIO QUE LOGOU -->
+		<p:outputLabel value="Usuário: #{MBAutenticar.funcionarioLogado.nome}" />
+		<br></br>
+		<br></br>
+		<!-- 		DEFINE OS MENUS -->
+		<p:panelMenu id="pnlMenuPrincipal" style="width:200px">
+			<p:submenu label="ARQUIVO">
+				<p:menuitem value="Autenticação" outcome="/pages/autenticacao.xhtml"
+					rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao == null}" />
+				<p:menuitem value="Página Inicial" outcome="/pages/principal.xhtml"
+					rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao != null}" />
+				<p:menuitem value="Sair" action="#{MBAutenticar.sair}"
+					rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao != null}" />
+			</p:submenu>
+
+			<p:submenu label="CADASTROS"
+				rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao != null and MBAutenticar.funcionarioLogado.funcao.descricao != 'Faturamento'}">
+				<p:menuitem value="Clientes" outcome="/pages/clientePesquisa.xhtml" />
+				<p:menuitem value="Produtos" outcome="/pages/produtoPesquisa.xhtml" />
+				<p:menuitem value="Fornecedores"
+					outcome="/pages/fornecedorPesquisa.xhtml" />
+				<p:menuitem value="Funcionários"
+					outcome="/pages/funcionarioPesquisa.xhtml"
+					rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao != 'Balconista'}" />
+			</p:submenu>
+
+			<p:submenu label="ORÇAMENTO"
+				rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao != null and MBAutenticar.funcionarioLogado.funcao.descricao != 'Faturamento'}">
+				<p:menuitem value="Novo" outcome="/pages/vendaCadastro.xhtml" />
+			</p:submenu>
+
+			<p:submenu label="RELATÓRIOS"
+				rendered="#{MBAutenticar.funcionarioLogado.funcao.descricao != null and MBAutenticar.funcionarioLogado.funcao.descricao != 'Faturamento'}">
+				<p:menuitem value="Produto"
+					actionListener="#{RelatorioMB.gerarRelatorioProduto()}"
+					target="_blank" ajax="false" />
+
+
+
+				<p:menuitem value="Venda"
+					actionListener="#{RelatorioMB.gerarRelatorioVenda()}"
+					target="_blank" ajax="false" />
+
+			</p:submenu>
+
+
+
+
+
+		</p:panelMenu>
+	</h:form>
+</ui:composition>

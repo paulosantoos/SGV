@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form>
+			<f:event listener="#{MBCliente.carregarEstados}" type="preRenderView" />
+
+			<h:panelGrid cellpadding="5" cellspacing="5">
+				<h3>Relatório de Fornecedor</h3>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" cellpadding="5" cellspacing="5">
+				<p:outputLabel value="Selecione um Estado:" />
+				<p:selectOneMenu id="estado" value="#{MBRelatorio.id}"
+					required="true" requiredMessage="Selecione um estado!">
+					<f:selectItem itemValue="" itemLabel="Selecione um estado" />
+					<f:selectItem itemValue="0" itemLabel="Todos" />
+					<f:selectItems value="#{MBCliente.comboEstados}" var="item"
+						itemValue="#{item.codigo}" itemLabel="#{item.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Data inicial:" />
+				<p:calendar id="txtProDataCadastroInicial"
+					value="#{MBRelatorio.dataCadastroProdutoInicial}" mode="popup"
+					required="true" requiredMessage="Selecione uma data inicial!">
+					<p:watermark for="txtProDataCadastroInicial" value="01/01/2014" />
+				</p:calendar>
+
+				<p:outputLabel value="Data final" />
+				<p:calendar id="txtProDataCadastroProdutoFinal"
+					value="#{MBRelatorio.dataCadastroProdutoFinal}" mode="popup"
+					required="true" requiredMessage="Selecione uma data final!">
+					<p:watermark for="txtProDataCadastroProdutoFinal"
+						value="12/12/2014" />
+				</p:calendar>
+
+				<p:commandButton value="Gerar Relatório" icon="ui-icon-print"
+					ajax="false"
+					actionListener="#{MBRelatorio.relatorioFornecedores()}" />
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

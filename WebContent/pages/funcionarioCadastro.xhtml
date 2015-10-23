@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/modeloSistema.xhtml">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="funacao" value="#{MBFuncionario.acao}" />
+			<f:viewParam name="funcionarioCodigo" value="#{MBFuncionario.codigo}" />
+
+			<f:event listener="#{MBFuncionario.carregarCadastro}"
+				type="preRenderView" />
+			<f:event listener="#{MBFuncionario.carregarEstados}"
+				type="preRenderView" />
+			<f:event listener="#{MBFuncionario.carregarCidades}"
+				type="preRenderView" />
+			<f:event listener="#{MBFuncionario.carregarFuncoes}"
+				type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menuPrincipal.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:panelGrid cellpadding="5" cellspacing="5">
+			<h2>Cadastro de Funcionários</h2>
+		</h:panelGrid>
+
+		<h:form id="frmFuncionario">
+			<h:panelGrid id="pnlFuncionario" columns="4" cellpadding="5"
+				cellspacing="5">
+				<p:outputLabel value="Código:" />
+				<p:inputText maxlength="7" size="8" disabled="true"
+					value="#{MBFuncionario.funcionario.codigo}" />
+
+				<p:outputLabel for="txtFunCpf" value="CPF:" />
+				<p:inputMask id="txtFunCpf" mask="999.999.999-99" maxlength="11"
+					size="20" value="#{MBFuncionario.funcionario.cpf}" required="true"
+					requiredMessage="O campo CPF é obrigatório."
+					readonly="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel for="txtFunNome" value="Nome:" />
+				<p:inputText id="txtFunNome" maxlength="45" size="61"
+					value="#{MBFuncionario.funcionario.nome}" required="true"
+					requiredMessage="O campo nome é obrigatório."
+					readonly="#{MBFuncionario.acao == 'Excluir'}">
+				</p:inputText>
+
+				<p:outputLabel for="cbFunEstado" value="Estado:" />
+				<p:selectOneMenu id="cbFunEstado"
+					value="#{MBFuncionario.funcionario.estado.codigo}" filter="true"
+					required="true" requiredMessage="O campo estado é obrigatório."
+					disabled="#{MBFuncionario.acao == 'Excluir'}">
+					<f:selectItem itemValue="" itemLabel="Selecione uma estado" />
+					<f:selectItems value="#{MBFuncionario.comboEstados}" var="estado"
+						itemValue="#{estado.codigo}" itemLabel="#{estado.nome}" />
+					<p:ajax listener="#{MBFuncionario.carregarCidades}"
+						update="cbFunCidade" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="txtFunEndereco" value="Endereço:" />
+				<p:inputText id="txtFunEndereco" maxlength="45" size="61"
+					value="#{MBFuncionario.funcionario.endereco}" required="true"
+					requiredMessage="O campo endereço é obrigatório."
+					readonly="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel for="cbFunCidade" value="Cidade:" />
+				<p:selectOneMenu id="cbFunCidade"
+					value="#{MBFuncionario.funcionario.cidade.codigo}" filter="true"
+					required="true" requiredMessage="O campo cidade é obrigatório."
+					disabled="#{MBFuncionario.acao == 'Excluir'}">
+					<f:selectItem itemValue="" itemLabel="Selecione uma cidade" />
+					<f:selectItems value="#{MBFuncionario.comboCidades}" var="cidade"
+						itemValue="#{cidade.codigo}" itemLabel="#{cidade.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Complemento:" />
+				<p:inputText maxlength="20" size="28"
+					value="#{MBFuncionario.funcionario.complemento}"
+					readonly="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Telefone:" />
+				<p:inputMask maxlength="11" size="20" mask="(99)9999-9999"
+					value="#{MBFuncionario.funcionario.telefone}"
+					readonly="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Bairro:" />
+				<p:inputText maxlength="20" size="28"
+					value="#{MBFuncionario.funcionario.bairro}"
+					readonly="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel value="Celular:" />
+				<p:inputMask maxlength="12" size="20" mask="(99)9999-9999"
+					value="#{MBFuncionario.funcionario.celular}"
+					readonly="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel for="txtFunDataNascimento" value="Data Nascimento:" />
+				<p:calendar id="txtFunDataNascimento"
+					value="#{MBFuncionario.funcionario.dataNascimento}" mask="99/99/99"
+					mode="popup" required="true"
+					requiredMessage="O campo data de nascimento é obrigatório."
+					disabled="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel for="txtFunDataCadastro" value="Data Cadastro:" />
+				<p:calendar id="txtFunDataCadastro"
+					value="#{MBFuncionario.funcionario.dataCadastro}" mask="99/99/99"
+					mode="popup" required="true"
+					requiredMessage="O campo data de cadastro é obrigatório."
+					disabled="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:outputLabel value="E-mail:" />
+				<p:inputText id="txtFunEmail"
+					value="#{MBFuncionario.funcionario.email}" maxlength="80" size="61"
+					readonly="#{MBFuncionario.acao == 'Excluir'}">
+					<p:watermark for="txtFunEmail"
+						value="exemplo@exemplo.com; exemplo2@exemplo.com" />
+				</p:inputText>
+			</h:panelGrid>
+
+			<h:panelGrid cellpadding="5" cellspacing="5">
+				<h2>Dados de Login</h2>
+			</h:panelGrid>
+
+			<h:panelGrid id="pnlFuncionarioLogin" columns="2" cellpadding="5">
+				<p:outputLabel for="txtFunNomeUsuario" value="Nome de Usuário:" />
+				<p:inputText id="txtFunNomeUsuario" maxlength="30" size="40"
+					value="#{MBFuncionario.funcionario.nomeUsuario}" required="true"
+					requiredMessage="O campo nome de usuario é obrigatório"
+					disabled="#{MBFuncionario.acao == 'Excluir'}">
+				</p:inputText>
+
+				<p:outputLabel for="txtFunSenha" value="Senha:" />
+				<p:password id="txtFunSenha" maxlength="30" size="40"
+					value="#{MBFuncionario.funcionario.senha}" required="true"
+					requiredMessage="O campo senha é obrigatório"
+					disabled="#{MBFuncionario.acao == 'Excluir'}">
+				</p:password>
+
+				<p:outputLabel for="cbFunFuncao" value="Função:" />
+				<p:selectOneMenu id="cbFunFuncao"
+					value="#{MBFuncionario.funcionario.funcao.codigo}" filter="true"
+					required="true" requiredMessage="O campo função é obrigatório"
+					disabled="#{MBFuncionario.acao == 'Excluir'}">
+					<f:selectItem itemValue="" itemLabel="Selecione uma função" />
+					<f:selectItems value="#{MBFuncionario.comboFuncoes}" var="funcao"
+						itemValue="#{funcao.codigo}" itemLabel="#{funcao.descricao}" />
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<h:panelGrid columns="5" cellspacing="40">
+				<p:commandButton value="Novo" icon="ui-icon-document"
+					update="pnlFuncionario" process="@this"
+					actionListener="#{MBFuncionario.novo}"
+					rendered="#{MBFuncionario.acao == 'Novo'}">
+				</p:commandButton>
+
+				<p:commandButton value="Salvar" icon="ui-icon-disk"
+					actionListener="#{MBFuncionario.salvar}"
+					update=":msgGlobal :frmFuncionario:pnlFuncionario :frmFuncionario:pnlFuncionarioLogin"
+					rendered="#{MBFuncionario.acao == 'Novo'}">
+				</p:commandButton>
+
+				<p:commandButton value="Editar" icon="ui-icon-pencil"
+					actionListener="#{MBFuncionario.editar}"
+					update=":msgGlobal :frmFuncionario:pnlFuncionario"
+					rendered="#{MBFuncionario.acao == 'Editar'}" />
+
+				<p:commandButton value="Excluir" icon="ui-icon-trash"
+					actionListener="#{MBFuncionario.excluir}" update=":msgGlobal"
+					rendered="#{MBFuncionario.acao == 'Excluir'}" />
+
+				<p:button value="Voltar" icon="ui-icon-arrowreturnthick-1-w"
+					outcome="/pages/funcionarioPesquisa.xhtml">
+				</p:button>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
